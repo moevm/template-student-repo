@@ -1,0 +1,28 @@
+name: Pylint
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-ecosystem/action-size@v2
+      id: size
+
+    - uses: actions-ecosystem/action-remove-labels@v1
+      with:
+          github_token: ${{ github.token }}
+          labels: ${{ steps.size.outputs.stale_labels }}
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+      with:
+          state: open
+    - run: echo "Your PR is ${PR}"
+      if: success() && steps.findPr.outputs.number
+      env:
+        PR: ${{ steps.findPr.outputs.pr }}
+    - name: check
+      run: |
+        docker run -v ${PR_BOT_CONFIG_PATH}:/config:r light5551/checker python3.8 pr.py "${{ github.token }}" ${{ steps.findPr.outputs.pr }} ${{ github.event.repository.full_name }} ${{ github.event.sender.login }}
+       
