@@ -1,4 +1,4 @@
-name: Pylint
+name: checker
 
 on: [pull_request]
 
