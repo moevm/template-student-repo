@@ -1,4 +1,4 @@
-name: checker
+name: pr checker
 
 on: [pull_request]
 
@@ -22,7 +22,9 @@ jobs:
       if: success() && steps.findPr.outputs.number
       env:
         PR: ${{ steps.findPr.outputs.pr }}
-    - name: check
-      run: |
-        docker run -v ${PR_BOT_CONFIG_PATH}:/config light5551/checker python3.8 pr.py "${{ github.token }}" ${{ steps.findPr.outputs.pr }} ${{ github.event.repository.full_name }} ${{ github.event.sender.login }}
-       
+    - uses: moevm/pull-requests-checker@main
+      with:
+          github-token: ${{ github.token }}
+          number-of-pr: ${{ steps.findPr.outputs.pr }}
+          repository-name: ${{ github.event.repository.full_name }}
+          author: ${{ github.event.sender.login }}
