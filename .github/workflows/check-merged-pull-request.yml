@@ -2,27 +2,19 @@ name: check-merged-pull-request
 
 on:
   pull_request:
-    types: [closed]
+    types:
+      - closed
 
 jobs:
   revert:
     runs-on: self-hosted
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     steps:
     - id: checkout
       name: Checkout
-      uses: actions/checkout@v2
-
-    - id: action-size
-      name: Size
-      uses: actions-ecosystem/action-size@v2
-
-    - id: action-remove-labels
-      name: Remove labels
-      uses: actions-ecosystem/action-remove-labels@v1
+      uses: actions/checkout@v3
       with:
-          github_token: ${{ github.token }}
-          labels: ${{ steps.action-size.outputs.stale_labels }}
+        path: "repository_files/"
 
     - id: find-pr
       name: Find PR
