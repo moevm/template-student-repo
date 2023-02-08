@@ -8,18 +8,7 @@ jobs:
     steps:
     - id: checkout
       name: Checkout
-      uses: actions/checkout@v2
-
-    - id: action-size
-      name: Size
-      uses: actions-ecosystem/action-size@v2
-
-    - id: action-remove-labels
-      name: Remove labels
-      uses: actions-ecosystem/action-remove-labels@v1
-      with:
-          github_token: ${{ github.token }}
-          labels: ${{ steps.action-size.outputs.stale_labels }}
+      uses: actions/checkout@v3
 
     - id: find-pr
       name: Find PR
@@ -41,3 +30,11 @@ jobs:
         number-of-pr: ${{ steps.find-pr.outputs.pr }}
         repository-name: ${{ github.event.repository.full_name }}
         author: ${{ github.event.sender.login }}
+
+    - id: linter
+      name: Check code style
+      uses: moevm/pull-requests-checker@linter
+      with:
+        github-token: ${{ github.token }}
+        number-of-pr: ${{ steps.find-pr.outputs.pr }}
+        repository-name: ${{ github.event.repository.full_name }}
